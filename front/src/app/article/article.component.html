@@ -1,0 +1,4 @@
+<div class="container-fluid mt-4 shadow-none  mb-5  rounded-3">
+   <app-form [dataForm]="dataForm" [articleData]="articleData" ></app-form>
+   <app-liste [articleData]="articleData" (articleUpdate)="articleDataUpdate($event) "></app-liste>
+</div>

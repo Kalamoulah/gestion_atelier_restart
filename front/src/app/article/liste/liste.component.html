@@ -1,0 +1,16 @@
+<div class="container shadow p-3 mb-5 bg-body rounded " style="margin-top: 50px;">
+    <table class="table">
+        <thead>
+            <tr  class="d-flex justify-content-between">
+                <th style="margin-left: 0px; width: 150px; text-align: center;" w>libelle</th>
+                <th style="margin-left: 100px; width: 150px;text-align: center; ">prix</th>
+                <th style="margin-left: 100px;width: 150px; text-align: center; ">stock</th>
+                <th style="margin-left: 100px;width: 150px; text-align: center;">categorie</th>
+                <th style="margin-left: 100px;width: 150px; text-align: center;">optiion</th>
+            </tr>
+        </thead>
+        <tbody>
+        <app-items [articleData]="articleData" (deleteArticle)="onDeleteArticle($event)" (updateArticle)="updateArticle($event)"></app-items>
+    </tbody>
+    </table>
+</div>

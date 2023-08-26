@@ -1,0 +1,69 @@
+<div class="container shadow p-3 mb-5 bg-body rounded " style="position: relative;">
+    <form [formGroup]="articleForm" class="container" style="width: 100%;">
+        <div class="d-flex">
+            <div style="width: 50%;">
+                <div class="col-8 d-flex align-items-center">
+                    <label for="libelle" class="m-4">Libelle<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="libelle" id="libelle" placeholder="Libelle"
+                        (input)="generateReference()">
+                </div>
+                <div class="col-8 d-flex align-items-center">
+                    <label for="libelle" class="m-4">Prix<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="prix" id="prix" placeholder="prix">
+                </div>
+                <div class="col-8 d-flex align-items-center">
+                    <label for="libelle" class="m-4">Stock<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="stock" id="stock" placeholder="stock">
+                </div>
+                <div class="col-8  d-flex align-items-center">
+                    <label for="inputPassword2" class="m-4">categorie<span class="text-danger">*</span></label>
+                    <select class="form-select" aria-label="Default select example" formControlName="selectedOption"
+                        name="select" (change)="generateReference()">
+                        <option selected>veullez selection un categorie</option>
+                        <option *ngFor="let categorie of dataForm?.categories" > {{ categorie.libelle }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-8 d-flex align-items-center">
+                    <label for="libelle" class="m-4">Fournisseur<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="Fournisseur" id="Fournisseur"
+                        placeholder="Fournisseur" (input)="searchFourniseur()">
+                </div>
+            </div>
+            <div style="width: 50%;">
+                <label  for="imageSelection" style="height: 200px; width: 200px; background-size: cover; background-image: url(assets/photo.png);">
+                <img [src]="backgroundImageSelected"  style="width: 100%; height: 100%; object-fit: cover;"> 
+                </label>
+                <input type="file" style="display: none;" id="imageSelection" formControlName="image"
+                    (change)="selectImage($event)" >
+                <div class="col-6 mt-5">
+                    <label for="reference" class="" name="reference">Reference</label>
+                    <input type="text" class="form-control" formControlName="reference" id="reference"
+                        placeholder="ref-lib-cat-x" readonly>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-outline-primary" (click)="sendingDataForm()"
+            [disabled]="!articleForm.valid">
+            {{ articleDataUpdate ? 'Edit' : 'Add' }}
+        </button>
+    </form>
+    <ul class="bg-light mt-4 p-2" style=" width:auto; display: flex; margin-left: 20px;  ">
+        <li class=" rounded-pill list-group-item shadow p-3 mr-3 bg-body" *ngFor="let fournisseur of listfournisseur">
+            <span>{{ fournisseur.libelle }}</span>
+            <input type="checkbox" name="#" id="{{ fournisseur.id }}" [checked]="selectedIds.includes(fournisseur.id)"
+                (change)="toggleSelection(fournisseur.id!)">
+        </li>
+    </ul>
+    <div style="width: 200px; height: auto; position: absolute; right: 0; top: 0;">
+        <li class=" rounded-pill list-group-item text-light d-flex mb-1" *ngFor=" let four of fournisseurSelected"
+            style="background-color: lightcoral; width: 150px; margin-bottom:10px;align-items: center;">
+            <span style="margin-right: 10px;">{{ four.libelle }}</span>
+            <span class="rounded-circle text-light fs-5"
+                style="width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; background-color: rgba(240, 248, 255, 0.292);"
+                (click)="removeSelected(four.id)">
+                <i class="fa-solid fa-xmark"></i>
+            </span>
+        </li>
+    </div>
+</div>
