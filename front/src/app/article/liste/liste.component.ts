@@ -15,6 +15,7 @@ export class ListeComponent {
   @Input() successToDelete!: boolean
 
   onDeleteArticle(event: number) {
+    console.log(event);
     this.articleId.emit(event)
   }
 

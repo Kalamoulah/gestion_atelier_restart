@@ -22,7 +22,7 @@ export class ItemsComponent {
     this.updateTextButton(element, idArticle)
 
     const value = element.textContent?.substring(0, 2)
-    console.log(value);
+    //  console.log(value);
 
     if (value === 'OK') {
       this.deleteArticle.emit(idArticle)

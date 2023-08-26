@@ -14,6 +14,7 @@ import { FormComponent } from './form/form.component';
 })
 
 export class ArticleComponent implements OnInit {
+
   @ViewChild(FormComponent, { static: false }) formComponent!: FormComponent;
   constructor(private _ArticleService: ArticleService) { }
   dataForm!: fournisseurCategory
@@ -84,13 +85,15 @@ export class ArticleComponent implements OnInit {
 
   // =================================================================================================
 
-  // deleteArticle(id: number) {
-  //   this._ArticleService.delete(id).subscribe((res: ResponseInterface) => {
-  //     if (res.success) {
-  //       this.articleData = this.articleData.filter(article => article.id != id)
-  //     }
-  //   });
-  // }
+  onDeleteArticle(id: number) {    
+    this._ArticleService.delete(id).subscribe((res: ResponseInterface) => {
+      if (res.success) {
+        this.articleData = this.articleData.filter(article => article.id != id)
+      }
+    });
+  }
+
+ 
 
   // articleUpdate(data: ArticleInterface) {
     //  console.log(data);
