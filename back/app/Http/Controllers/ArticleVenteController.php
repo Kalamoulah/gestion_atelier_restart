@@ -84,26 +84,26 @@ class ArticleVenteController extends Controller
             $nouvelArticle = ArticleVente::create([
                 "libelle" => $datas['libelle'],
                 "categories_id" => $categorie->id,
-                "path_url" => "base64 image",
+                "path_url" =>  $request->path_url,
                 "reference" => $request->reference,
-                "promo" => 0,
-                "marge" => 500,
+                "promo" => $request->promo,
+                "marge" => $request->marge,
                 'prix' => $prixDeVente,
                 'cout' => $coutDeFabrication,
                 'stock' => 1
             ]);
 
-          
+
             foreach ($datas['confection'] as $confectionItem) {
-                 $nouvelArticle->articles()->attach($confectionItem['id'], ['quantity' => $confectionItem['qte']]);
-        
+                $nouvelArticle->articles()->attach($confectionItem['id'], ['quantity' => $confectionItem['qte']]);
+
             }
-    
+
             $response = array_merge($nouvelArticle->toArray(), [
                 'categorie' => $categorie->libelle,
                 'confection' => $datas['confection'],
             ]);
-    
+
             return dataCollection::toApiResponse("article de vente insereré", $response, true);
         });
     }
@@ -113,16 +113,67 @@ class ArticleVenteController extends Controller
      */
     public function show(string $id)
     {
-        //
+        //  
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+
+    public function update(ArticleVenteRequest $request, $id)
     {
-        //update 
+        return DB::transaction(function () use ($request, $id) {
+            $articleVente = ArticleVente::findOrFail($id);
+            $newData = $request->validated();
+        //   return  $request ;
+            // Calculer le coût de fabrication
+            $coutDeFabrication = 0;
+            foreach ($newData['confection'] as $confectionItem) {
+                $articleConfection = Article::findOrFail($confectionItem['id']);
+
+                if ($confectionItem['qte'] > $articleConfection->stock) {
+                    return response()->json(['error' => "Stock insuffisant pour l'article {$articleConfection->libelle}"], 400);
+                }
+
+                $coutDeFabrication += $confectionItem['qte'] * $articleConfection->prix;
+            }
+
+            // Vérifier la marge
+            $minimumMarge = 500;
+            $maximumMarge = $coutDeFabrication / 3;
+            if (!($request->marge >= $minimumMarge && $request->marge  <= $maximumMarge)) {
+                return response()->json(['error' => "Marge invalide"], 400);
+            }
+
+            // Mettre à jour l'article de vente
+            $prixDeVente = $coutDeFabrication + $request->marge;
+            $articleVente->update([
+                "libelle" => $newData['libelle'],
+                "categories_id" => $articleVente ->id,
+                "reference" => $request->reference,
+                "promo" => $request->promo,
+                "marge" => $request->marge,
+                "prix" => $prixDeVente,
+                "cout" => $coutDeFabrication,
+            ]);
+
+            // Mettre à jour les articles de confection associés
+            $articleVente->articles()->detach();
+            foreach ($newData['confection'] as $confectionItem) {
+                $articleVente->articles()->attach($confectionItem['id'], ['quantity' => $confectionItem['qte']]);
+            }
+
+            // Réponse de succès
+            $response = array_merge($articleVente->toArray(), [
+                'categorie' => $articleVente->categorie->libelle,
+                'confection' => $newData['confection'],
+            ]);
+
+            return response()->json($response, 200);
+        });
     }
+
+
 
     /**
      * Remove the specified resource from storage.
