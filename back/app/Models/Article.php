@@ -15,13 +15,24 @@ class Article extends Model
     protected $guarded = [
         'id'
     ];
+
+   
     
     public function categorie(): BelongsTo
     {
         return $this->belongsTo(Categories::class, 'categories_id');
     }
+
     public function fournisseurs(): BelongsToMany
     {
         return $this->belongsToMany(Fournisseur::class, 'article_fournisseurs');
     }
+    
+    public function ventes(): BelongsToMany
+    {
+        return $this->belongsToMany(ArticleVente::class, 'confection_vente', 'article_id', 'article_vente_id');
+    }
+   
+
+   
 }

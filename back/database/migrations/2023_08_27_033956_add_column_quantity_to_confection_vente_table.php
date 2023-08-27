@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('articles', function (Blueprint $table) {
-            $table->float('promo')->nullable();
-            $table->float('marge')->nullable();
-            $table->float('coutFabrication')->nullable();
+        Schema::table('confection_vente', function (Blueprint $table) {
+           $table->integer('quantity');
         });
     }
 
@@ -23,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('articles', function (Blueprint $table) {
+        Schema::table('confection_vente', function (Blueprint $table) {
             //
         });
     }

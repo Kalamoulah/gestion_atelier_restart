@@ -28,12 +28,11 @@ class CategorieController extends Controller
     {
         $paginatedData = Categories::paginate(4);
 
-        // Transformer les données avec la ressource CategoriRessource
+      
         $data = CategoriRessource::collection($paginatedData)->items();
 
-        // Récupérer les métadonnées sans duplication des données
         $meta = $paginatedData->toArray();
-        unset($meta['data']); // Supprimer la clé 'data' pour éviter la duplication
+        unset($meta['data']); 
 
         return ['data' => $data, 'meta' => $meta];
     }

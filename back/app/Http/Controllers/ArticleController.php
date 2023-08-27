@@ -44,7 +44,7 @@ class ArticleController extends Controller
     public function index()
     {
         $datas = Article::with('fournisseurs')->get();
-        $article = $datas->map(function ($article) {
+       $article = $datas->map(function ($article) {
             return [
                 'id' => $article->id,
                 'libelle' => $article->libelle,
@@ -54,7 +54,7 @@ class ArticleController extends Controller
                 'path_url' => $article->path_url,
                 'reference' => $article->reference,
                 'fournisseurs' => $article->fournisseurs->pluck('id')->toArray(),
-            ];
+            ]; 
         });
         $fournisseur = FournisseurResource::collection(Fournisseur::all());
         $categorie = CategoriRessource::collection(Categories::all());

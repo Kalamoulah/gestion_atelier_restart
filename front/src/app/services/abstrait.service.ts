@@ -11,7 +11,7 @@ export abstract class AbstraitService <T> {
 
   constructor(protected http: HttpClient) { }
    
-abstract uri():string;
+    abstract uri():string;
 
   add(data: object): Observable<T> {
     return this.http.post<T>(`${environment.url}${this.uri()}`, data);
