@@ -8,16 +8,26 @@ import { Category } from 'src/app/interface/paginate.interface';
   styleUrls: ['./item-vente.component.css']
 })
 export class ItemVenteComponent {
+
    @Input() articleVente!: articleVente[]
 
    @Input() dataPaginate!: articleVente;
    @Input() allArticlePaginate! :number
    @Output() deleteArticle = new EventEmitter<number>();
 
+   @Output() updateDataArticle = new EventEmitter<articleVente>
+
 
    deleteArt(idArticle: articleVente) {
         console.log(idArticle.id);
         this.deleteArticle.emit(idArticle.id)
+   }
+
+    updateArticleVente(data: articleVente) {
+      console.log(data);
+      this.updateDataArticle.emit(data)
     }
+
+    
 }
 

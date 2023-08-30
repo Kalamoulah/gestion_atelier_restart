@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { articleVente } from 'src/app/interface/article.interface';
 import { Category } from 'src/app/interface/paginate.interface';
@@ -12,22 +12,24 @@ import { dataResponseCategory } from 'src/app/interface/response.interface';
 })
 export class FormVenteComponent {
 
-  @Input() categories!: dataResponseCategory[];
-  @Input() categoriesVente!: Category[]
-  @Output()  submitForm = new EventEmitter<articleVente>();
-  promo: boolean = false
 
+  @Input() categories: dataResponseCategory[] = [];
+  @Input() categoriesVente!: Category[]
+  @Output() submitForm = new EventEmitter<articleVente>();
+  promo: boolean = false
   AticleVenteForm!: FormGroup;
   backgroundImageSelected: any;
   photo!: any
+  suggestion: dataResponseCategory[][] = [];
+
 
   constructor(private fb: FormBuilder, private sanitizer: DomSanitizer) {
     this.AticleVenteForm = this.fb.group({
-      libelle: ['',[Validators.required, Validators.minLength(3)]],
-      categorie: ['veullez selection un categorie',[Validators.required]],
+      libelle: ['', [Validators.required, Validators.minLength(3)]],
+      categorie: ['veullez selection un categorie', [Validators.required]],
       promo: [0, [Validators.required,]],
-      cout: [0,[Validators.required]],
-      marge: ['',[Validators.required]],
+      cout: [0, [Validators.required]],
+      marge: ['', [Validators.required]],
       prix: [0, [Validators.required]],
       reference: [''],
       // image: [''],
@@ -43,14 +45,40 @@ export class FormVenteComponent {
     return this.AticleVenteForm.get('confection') as FormArray
   }
 
-  addNewRow() {
-    const newRow = this.fb.group({
-      id: [''],
-      libelleConf: [''],
-      qte: [null],
-    })
-    this.confection.push(newRow)
+  chargerFormulaire(article: articleVente) {
+    this.AticleVenteForm?.patchValue(article);
+    
+    while (this.confection.length !== 0) {
+      this.confection.removeAt(0);
+    }
+    article.confection.forEach(conf => {
+      this.confection.push(new FormGroup({
+        id: new FormControl([conf.id]),
+        libelleConf: new FormControl([conf.libelleConf]),
+        qte: new FormControl([conf.quantity])
+      }));
+    });
+
   }
+
+    addNewRow() {
+     
+      const newRow = this.fb.group({
+        id: [''],
+        libelleConf: ['', [Validators.required]],
+        qte: [null, [Validators.required]],
+      })
+       if (this.confection.length == 0) {
+         this.confection.push(newRow)
+         return
+       }
+        if (!this.confection.at(this.confection.length - 1)?.valid) {
+         alert("ZOom baby");
+         return
+         }
+         this.confection.push(newRow)
+    }
+
 
   onClickPromo(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -70,14 +98,18 @@ export class FormVenteComponent {
   //   }
   // }
 
-  suggestion: dataResponseCategory[][] = [];
 
   onInputFieldLib(rowIndex: number) {
 
     const rowGroup = this.confection.controls[rowIndex] as FormGroup;
     const searchTerm = rowGroup.controls['libelleConf'].value;
-    this.suggestion[rowIndex] = this.categories
-      .filter(category => category.libelle.startsWith(searchTerm))
+    console.log(searchTerm);
+    console.log(this.categories);
+
+    this.suggestion[rowIndex] = this.categories!
+      .filter(category => category.libelle.startsWith(searchTerm)
+      )
+    console.log(this.suggestion);
   }
 
   onSuggestionClick(suggestion: dataResponseCategory, rowIndex: number) {
@@ -89,7 +121,6 @@ export class FormVenteComponent {
 
   onInputFielQtr(rowIndex: number) {
     let totalCost = 0;
-
     for (let i = 0; i < this.confection?.controls.length; i++) {
       const rowGroup = this.confection.controls[i] as FormGroup;
 
@@ -97,19 +128,19 @@ export class FormVenteComponent {
       const prix = this.suggestion[i]?.find(suggestion =>
         suggestion.libelle === rowGroup.controls['libelleConf'].value)?.prix || 0;
 
-        const stock = this.suggestion[i]?.find(suggestion =>
-          suggestion.stock
-        )
-         
-        let costForRow  =0
-        if (qte >= stock?.stock!) {
-        //  alert('stock insuffisant, stock dispo: '+ stock?.stock!)
-        
-         rowGroup.controls['qte'].setValue('');
-        }else{
-          costForRow = qte * prix
-          totalCost += costForRow;
-        }
+      const stock = this.suggestion[i]?.find(suggestion =>
+        suggestion.stock
+      )
+      let costForRow = 0
+      if (qte >= stock?.stock!) {
+        alert('stock insuffisant, stock dispo: ' + stock?.stock!)
+
+
+        rowGroup.controls['qte'].setValue('');
+      } else {
+        costForRow = qte * prix
+        totalCost += costForRow;
+      }
 
     }
 
@@ -122,7 +153,7 @@ export class FormVenteComponent {
   onInputFieldMarge() {
     let marge = this.AticleVenteForm.value.marge;
     let cout = this.AticleVenteForm.value.cout
-    
+
     let maximumMarge = cout / 3;
     if (marge >= 500 && marge <= maximumMarge) {
       console.log(cout);
@@ -159,12 +190,20 @@ export class FormVenteComponent {
     }
   }
 
+  validInput(name: string) {
+    const regex = /^[0-9]*$/;
+    let inputValue = this.AticleVenteForm.value[name];
+    if (!regex.test(inputValue)) {
+      this.AticleVenteForm.get(name)?.patchValue(inputValue.replace(/[^0-9]/g, ''));
+    }
+  }
+
 
   onSubmit() {
-   console.log("mouus");
-   
+    console.log("mouus");
+
     const formData = this.AticleVenteForm.value;
-    
+
     this.submitForm.emit(formData);
 
   }

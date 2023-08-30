@@ -29,7 +29,7 @@ class ArticleVenteResource extends JsonResource
                     return $this->articles->map(function($article){
                         return [
                             'id'=>$article->id,
-                            'libelle'=>$article->libelle,
+                            'libelleConf'=>$article->libelle,
                             'quantity'=>$article->pivot->quantity
                         ];
                     });

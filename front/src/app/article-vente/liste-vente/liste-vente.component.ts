@@ -10,14 +10,16 @@ import { Category } from 'src/app/interface/paginate.interface';
 export class ListeVenteComponent {
 
 
+
  @Input() articleVente!: articleVente[]
 
  @Output() deleteArticle = new EventEmitter<number>();
+ @Output() updateArticle = new EventEmitter<articleVente>();
 
  @Input() allArticlePaginate! :number
 
  @Input() dataPaginate! : articleVente[]
-  // currentPage: number = 1;
+ @Output() pageChanged = new EventEmitter<number>(); 
   @Input() currentPage!: number;
 
   articleDelete(event: number) {
@@ -27,6 +29,12 @@ export class ListeVenteComponent {
   renderPage(event: number) {
     console.log("New Page:", event);
     this.currentPage = event;
+    this.pageChanged.emit(event);
   }
+
+  updateDataArticle(data: articleVente) {
+   console.log(data);
+    this.updateArticle.emit(data)
+   }
   
 }

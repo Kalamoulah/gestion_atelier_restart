@@ -21,9 +21,13 @@ class ArticleVenteController extends Controller
      */
     public function index()
     {
-        $paginatedData = ArticleVente::paginate(4);
-        $data = ArticleVenteResource::collection($paginatedData)->items();
-        $meta = $paginatedData->toArray();
+        // $articleVente = ArticleVente::with('articles')->get();
+        // $paginatedData = ArticleVente::paginate(4);
+        // $data = ArticleVenteResource::collection($paginatedData)->items();
+      
+        $articleVente = ArticleVente::with('articles')->paginate(4);
+        $data =  ArticleVenteResource::collection($articleVente)->items();
+        $meta = $articleVente->toArray();
         unset($meta['data']);
         return ['data' => $data, 'meta' => $meta];
     }

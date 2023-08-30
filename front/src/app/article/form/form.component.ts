@@ -44,7 +44,6 @@ export class FormComponent implements OnChanges {
     this.articleForm?.patchValue(article);
   }
 
-
   ngOnChanges(changes: SimpleChanges): void {
 
     console.log(changes['articleDataUpdate']?.currentValue);

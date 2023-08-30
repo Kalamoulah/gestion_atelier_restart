@@ -3,10 +3,14 @@
     <td>{{ dataPaginate.prix }}</td>
     <td>   <ul>
         <li *ngFor="let conf of dataPaginate.confection">
-            {{ conf.libelle }}-{{conf.quantity}}
+            {{ conf.libelleConf }}-{{conf.quantity}}
         </li>
     </ul></td>
     <td>
-        <button class="btn btn-sm btn-warning" style="margin-right: 10px;">Edit</button>
-        <button class="btn btn-sm btn-danger" value="{{dataPaginate.id}}"   (click)="deleteArt(dataPaginate)">Supp</button>
+        <button class="btn btn-sm btn-warning" style="margin-right: 10px;" 
+        (click)="updateArticleVente(dataPaginate)"
+        >Edit</button>
+        <button class="btn btn-sm btn-danger" 
+         value="{{dataPaginate.id}}"  
+         (click)="deleteArt(dataPaginate)">Supp</button>
     </td>

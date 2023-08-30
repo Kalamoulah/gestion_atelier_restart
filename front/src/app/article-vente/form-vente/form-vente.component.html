@@ -46,15 +46,18 @@
                                 <tr *ngFor="let row of confection.controls; let i = index" [formGroupName]="i">
                                     <td><input type="text" class="form-control" formControlName="libelleConf"
                                             (input)="onInputFieldLib(i)"></td>
-                                    <td><input type="number" class="form-control" formControlName="qte"
-                                            (input)="onInputFielQtr(i)"></td>
-                                    <div *ngIf="suggestion[i].length > 0" class="suggestions">
+                                    <td>
+                                        <input type="number" class="form-control" formControlName="qte"
+                                            (input)="onInputFielQtr(i)">
+                                    </td>
+
+                                    <div  class="suggestions">
                                         <div *ngFor="let suggestion of suggestion[i]"    
                                             (click)="onSuggestionClick(suggestion, i)">
                                             {{ suggestion.libelle }}
                                             <input type="hidden" [value]="suggestion.id" formControlName="id">
                                         </div>
-                                    </div>
+                                    </div> 
                                 </tr>
                             </tbody>
                         </table>
@@ -68,7 +71,10 @@
                     </div>
                     <div class="col-4">
                         <label for="inputPassword2">marge<span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" formControlName="marge" (input)="onInputFieldMarge()">
+                        <input type="text" class="form-control" formControlName="marge" 
+                        (input)="onInputFieldMarge()"
+                        (input)="validInput('marge')"
+                        >
                     </div>
                 </div>
                 <div class="col-4 ">
@@ -82,18 +88,15 @@
                     style="height: 200px; width: 200px; background-size: cover; background-image: url(assets/photo.png);">
                     <img [src]="backgroundImageSelected" style="width: 100%; height: 100%; object-fit: cover;">
                 </label>
-                <input type="file" style="display: none;" id="imageSelection" 
-                    (change)="selectImage($event)">
+                <input type="file" style="display: none;" id="imageSelection" (change)="selectImage($event)">
                 <div class="col-6 mt-5">
-                    <label for="reference" class="" name="reference" >Reference</label>
-                    <input type="text" class="form-control" id="reference" placeholder="ref-lib-cat-x" >
+                    <label for="reference" class="" name="reference">Reference</label>
+                    <input type="text" class="form-control" id="reference" placeholder="ref-lib-cat-x">
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-outline-primary mt-4" 
-        (click)="onSubmit()"
-        [disabled]="AticleVenteForm.invalid"
-        >
+        <button type="submit" class="btn btn-outline-primary mt-4" (click)="onSubmit()"
+            [disabled]="AticleVenteForm.invalid">
             envoyer
         </button>
     </form>

@@ -14,6 +14,7 @@
                 (deleteArticle)="articleDelete($event)" 
                 [dataPaginate]="dataPaginate"
                 [allArticlePaginate]="allArticlePaginate"
+                (updateDataArticle)="updateDataArticle($event)"
                 *ngFor="let dataPaginate of dataPaginate | paginate
                 : {
                     itemsPerPage: 4,
@@ -21,7 +22,6 @@
                     totalItems: allArticlePaginate
                     }">
                 </tr>
-            
         </tbody>
         </table>
         <div class="d-flex justify-content-center">

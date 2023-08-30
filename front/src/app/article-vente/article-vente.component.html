@@ -2,8 +2,11 @@
     <app-form-vente [categories]="categories" [categoriesVente]="categoriesVente" (submitForm)="sendDataForm($event)" ></app-form-vente>
     <app-liste-vente 
     [articleVente]="articleVente" 
-    (deleteArticle)="articleDelete($event)" 
+    (deleteArticle)="articleDelete($event)"
+    (updateArticle)="updateArticle($event)" 
     [dataPaginate]="dataPaginate"
     [currentPage]="currentPage"
+    [allArticlePaginate]="allArticlePaginate"
+    (pageChanged)="onPageChanged($event)" 
     ></app-liste-vente>
  </div>

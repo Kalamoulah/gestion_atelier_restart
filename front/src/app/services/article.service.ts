@@ -24,7 +24,6 @@ export class ArticleService extends AbstraitService<ResponseInterface>{
   }
 
  
-  
   // delete(id: number): Observable<ResponseInterface> {
   //   return this.http.delete<ResponseInterface>(`http://127.0.0.1:8000/api/article/${id}`);
   // }
