@@ -1,0 +1,102 @@
+<div class="container shadow p-3 mb-5 bg-body rounded " style="position: relative;">
+    <form class="container" [formGroup]="AticleVenteForm" style="width: 100%;">
+        <div class="d-flex justify-content-between ">
+            <div style="width: 50%;">
+                <!-- libelle et categorie -->
+                <div class="d-flex">
+                    <div class="col-4 ">
+                        <label for="libelle" class="m-4">Libelle<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="libelle" formControlName="libelle"
+                            placeholder="Libelle">
+                    </div>
+                    <div class="col-4">
+                        <label for="inputPassword2" class="m-4">categorie<span class="text-danger">*</span></label>
+                        <select class="form-select" aria-label="Default select example" name="select"
+                            formControlName="categorie">
+                            <option selected>veullez selection un categorie</option>
+                            <option *ngFor="let cv of categoriesVente"> {{ cv.libelle }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <!-- promo et checkbox -->
+                <div class="d-flex" style="margin-top: 30px;">
+                    <div class="" style="margin-right: 50px;">
+                        <label for="libelle" style="margin-right: 20px;">promo</label>
+                        <input type="checkbox" name="" id="" (change)="onClickPromo($event)">
+                    </div>
+                    <div class="" *ngIf="promo">
+                        <label for="libelle" style="margin-right: 20px;">Valeur</label>
+                        <input type="number" class="formControl" formControlName="promo">
+                    </div>
+                </div>
+                <div class="table">
+                    <div class="container shadow p-3 mb-5 bg-body rounded " style="margin-top: 50px;">
+                        <!-- <button class="btn btn-primary" style="position: absolute; top: 50%;left: 50%;">plus</button> -->
+                        <button class="btn btn-primary" style="position: absolute; left: 45%;"
+                            (click)="addNewRow()">plus</button>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>libelle</th>
+                                    <th>qte</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="confection">
+                                <tr *ngFor="let row of confection.controls; let i = index" [formGroupName]="i">
+                                    <td><input type="text" class="form-control" formControlName="libelleConf"
+                                            (input)="onInputFieldLib(i)"></td>
+                                    <td><input type="number" class="form-control" formControlName="qte"
+                                            (input)="onInputFielQtr(i)"></td>
+                                    <div *ngIf="suggestion[i].length > 0" class="suggestions">
+                                        <div *ngFor="let suggestion of suggestion[i]"    
+                                            (click)="onSuggestionClick(suggestion, i)">
+                                            {{ suggestion.libelle }}
+                                            <input type="hidden" [value]="suggestion.id" formControlName="id">
+                                        </div>
+                                    </div>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-4 " style="margin-right: 30px;">
+                        <label for="libelle">cout de fabication<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="libelle" formControlName="cout"
+                            placeholder="Libelle" readonly>
+                    </div>
+                    <div class="col-4">
+                        <label for="inputPassword2">marge<span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" formControlName="marge" (input)="onInputFieldMarge()">
+                    </div>
+                </div>
+                <div class="col-4 ">
+                    <label for="libelle">prix de vente <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="prix" id="libelle" placeholder="Libelle"
+                        readonly>
+                </div>
+            </div>
+            <div style="width: 30%; ">
+                <label for="imageSelection"
+                    style="height: 200px; width: 200px; background-size: cover; background-image: url(assets/photo.png);">
+                    <img [src]="backgroundImageSelected" style="width: 100%; height: 100%; object-fit: cover;">
+                </label>
+                <input type="file" style="display: none;" id="imageSelection" 
+                    (change)="selectImage($event)">
+                <div class="col-6 mt-5">
+                    <label for="reference" class="" name="reference" >Reference</label>
+                    <input type="text" class="form-control" id="reference" placeholder="ref-lib-cat-x" >
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-outline-primary mt-4" 
+        (click)="onSubmit()"
+        [disabled]="AticleVenteForm.invalid"
+        >
+            envoyer
+        </button>
+    </form>
+
+
+</div>

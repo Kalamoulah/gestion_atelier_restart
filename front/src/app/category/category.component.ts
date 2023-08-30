@@ -42,18 +42,21 @@ export class CategoryComponent implements OnInit {
 
   //   })
   // }
+
   getCategory() {
     this._categoriService.getAll(this.currentPage).subscribe((res: DataPaginate) => {
       console.log(res);
       this.data = res.data
       this.allCategory = res.meta.total;
-      console.log(this.data);
+      
 
     })
   }
+
   ngOnInit(): void {
     this.getCategory()
   }
+
   renderPage(event: number) {
     this.currentPage = event;
     this.getCategory();

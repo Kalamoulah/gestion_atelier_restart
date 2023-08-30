@@ -1,1 +1,9 @@
-<p>article-vente works!</p>
+<div class="container-fluid mt-4 shadow-none  mb-5  rounded-3">
+    <app-form-vente [categories]="categories" [categoriesVente]="categoriesVente" (submitForm)="sendDataForm($event)" ></app-form-vente>
+    <app-liste-vente 
+    [articleVente]="articleVente" 
+    (deleteArticle)="articleDelete($event)" 
+    [dataPaginate]="dataPaginate"
+    [currentPage]="currentPage"
+    ></app-liste-vente>
+ </div>

@@ -16,6 +16,8 @@ export class ItemsComponent {
 
   allStudents: number = 0;
   pagination: number = 1;
+
+  
   onClickBtnButton(event: Event) {
     const element = event.target as HTMLButtonElement
     const idArticle = +element.value

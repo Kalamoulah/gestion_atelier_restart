@@ -5,6 +5,7 @@ import { ArticleInterface } from '../interface/article.interface';
 import { ResponseInterface } from '../interface/response.interface';
 import { AbstraitService } from './abstrait.service';
 import { environment } from 'src/environments/environment.development';
+import { DataPaginate } from '../interface/paginate.interface';
 @Injectable({
   providedIn: 'root'
 })
@@ -21,6 +22,8 @@ export class ArticleService extends AbstraitService<ResponseInterface>{
   all(): Observable<ResponseInterface> {
     return this.http.get<ResponseInterface>(`${environment.url}${this.uri()}`);
   }
+
+ 
   
   // delete(id: number): Observable<ResponseInterface> {
   //   return this.http.delete<ResponseInterface>(`http://127.0.0.1:8000/api/article/${id}`);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ArticleVenteRequest;
+use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ArticleVenteResource;
 use App\Http\Resources\CategoriRessource;
 use App\Http\Resources\dataCollection;
@@ -31,21 +32,20 @@ class ArticleVenteController extends Controller
     {
 
         $articleVente = ArticleVente::with('articles')->get();
-
-        $categorieVente = CategoriRessource::collection(
-            Categories::where('type_article', 'vente')->get()
-        );
-
+        $articleConf = ArticleResource::collection(Article::all());
+        $categorieVente = Categories::where('type_article', "vente")->get();
         return response()->json([
             "message" => "all data",
             'data' => [
-                "categorie" => $categorieVente,
+                "categories" => [
+                    "categorie" => $articleConf,
+                    "categorieVente"=> CategoriRessource::collection($categorieVente),
+                ],
                 "articleVente" => ArticleVenteResource::collection($articleVente),
             ],
             "success" => true
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -58,12 +58,11 @@ class ArticleVenteController extends Controller
             if (!$categorie) {
                 response()->json("erreur categorie n'existe pas");
             }
-
             //calcul du cout de fabrication
             $coutDeFabrication = 0;
             $articleConfection = [];
             foreach ($datas['confection'] as $item) {
-                $articleConfection = Article::where('libelle', $item['libelle'])->first();
+                $articleConfection = Article::where('libelle', $item['libelleConf'])->first();
 
                 if ($articleConfection) {
                     if ($item['qte'] > $articleConfection->stock) {
@@ -76,7 +75,6 @@ class ArticleVenteController extends Controller
             }
             $minimumMarge = 500;
             $maximumMarge = $coutDeFabrication / 3;
-
             if (!($request->marge >= $minimumMarge && $request->marge <= $maximumMarge)) {
                 return response()->json("erreur");
             }
@@ -92,18 +90,14 @@ class ArticleVenteController extends Controller
                 'cout' => $coutDeFabrication,
                 'stock' => 1
             ]);
-
-
             foreach ($datas['confection'] as $confectionItem) {
                 $nouvelArticle->articles()->attach($confectionItem['id'], ['quantity' => $confectionItem['qte']]);
-
-            }
+            } 
 
             $response = array_merge($nouvelArticle->toArray(), [
                 'categorie' => $categorie->libelle,
                 'confection' => $datas['confection'],
             ]);
-
             return dataCollection::toApiResponse("article de vente insereré", $response, true);
         });
     }
@@ -115,7 +109,6 @@ class ArticleVenteController extends Controller
     {
         //  
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -125,8 +118,7 @@ class ArticleVenteController extends Controller
         return DB::transaction(function () use ($request, $id) {
             $articleVente = ArticleVente::findOrFail($id);
             $newData = $request->validated();
-        //   return  $request ;
-            // Calculer le coût de fabrication
+       
             $coutDeFabrication = 0;
             foreach ($newData['confection'] as $confectionItem) {
                 $articleConfection = Article::findOrFail($confectionItem['id']);
@@ -138,14 +130,13 @@ class ArticleVenteController extends Controller
                 $coutDeFabrication += $confectionItem['qte'] * $articleConfection->prix;
             }
 
-            // Vérifier la marge
             $minimumMarge = 500;
             $maximumMarge = $coutDeFabrication / 3;
             if (!($request->marge >= $minimumMarge && $request->marge  <= $maximumMarge)) {
                 return response()->json(['error' => "Marge invalide"], 400);
             }
 
-            // Mettre à jour l'article de vente
+    
             $prixDeVente = $coutDeFabrication + $request->marge;
             $articleVente->update([
                 "libelle" => $newData['libelle'],
@@ -157,12 +148,10 @@ class ArticleVenteController extends Controller
                 "cout" => $coutDeFabrication,
             ]);
 
-            // Mettre à jour les articles de confection associés
             $articleVente->articles()->detach();
             foreach ($newData['confection'] as $confectionItem) {
                 $articleVente->articles()->attach($confectionItem['id'], ['quantity' => $confectionItem['qte']]);
             }
-
             // Réponse de succès
             $response = array_merge($articleVente->toArray(), [
                 'categorie' => $articleVente->categorie->libelle,

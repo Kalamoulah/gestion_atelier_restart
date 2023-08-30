@@ -28,8 +28,10 @@ class ArticleVente extends Model
     {
         return $this->belongsTo(Categories::class, 'categories_id');
     }
+    
     public function articles()
     {
-        return $this->belongsToMany(Article::class, 'confection_vente', 'article_vente_id', 'article_id');
+        return $this->belongsToMany(Article::class, 'confection_vente', 'article_vente_id', 'article_id', )
+            ->withPivot('quantity');
     }
 }

@@ -10,7 +10,9 @@ export interface ResponseInterface {
 export interface dataResponseCategory extends AbstraitInterface {
     // id: number,
     // libelle:string
-    
+    quantity?:number
+    prix?:number
+    stock?:number
 }
 
 export interface fourniseurFilter {

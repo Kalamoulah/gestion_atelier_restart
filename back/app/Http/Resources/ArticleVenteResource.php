@@ -30,6 +30,7 @@ class ArticleVenteResource extends JsonResource
                         return [
                             'id'=>$article->id,
                             'libelle'=>$article->libelle,
+                            'quantity'=>$article->pivot->quantity
                         ];
                     });
                 })

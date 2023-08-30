@@ -1,0 +1,30 @@
+    <div class="container shadow p-3 mb-5 bg-body rounded " style="margin-top: 50px;">
+        <table class="table">
+            <thead>
+                <tr  >
+                    <th >libelle</th>
+                    <th >quantiy</th>
+                    <th >article conf</th>
+                    <th >option</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr class="app-item-vente" 
+                (deleteArticle)="articleDelete($event)" 
+                [dataPaginate]="dataPaginate"
+                [allArticlePaginate]="allArticlePaginate"
+                *ngFor="let dataPaginate of dataPaginate | paginate
+                : {
+                    itemsPerPage: 4,
+                    currentPage: currentPage,
+                    totalItems: allArticlePaginate
+                    }">
+                </tr>
+            
+        </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+            <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
+        </div>
+    </div>

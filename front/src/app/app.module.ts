@@ -14,11 +14,15 @@ import { FormComponent } from './article/form/form.component';
 import { ListeComponent } from './article/liste/liste.component';
 import { ItemsComponent } from './article/liste/items/items.component';
 import { ArticleVenteComponent } from './article-vente/article-vente.component';
+import { FormVenteComponent } from './article-vente/form-vente/form-vente.component';
+import { ListeVenteComponent } from './article-vente/liste-vente/liste-vente.component';
+import { ItemVenteComponent } from './article-vente/liste-vente/item-vente/item-vente.component';
+
 
 const routes: Routes = [
   { path: 'category', component: CategoryComponent },
   { path: 'article', component: ArticleComponent },
-  { path: 'article-Vente', component: ArticleComponent },
+  { path: 'article-vente', component: ArticleVenteComponent },
 ];
 
 @NgModule({
@@ -30,6 +34,10 @@ const routes: Routes = [
     ListeComponent,
     ItemsComponent,
     ArticleVenteComponent,
+    FormVenteComponent,
+    ListeVenteComponent,
+    ItemVenteComponent,
+
   ],
   imports: [
     BrowserModule,

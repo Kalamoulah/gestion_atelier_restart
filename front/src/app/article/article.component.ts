@@ -16,6 +16,7 @@ import { FormComponent } from './form/form.component';
 export class ArticleComponent implements OnInit {
 
   @ViewChild(FormComponent, { static: false }) formComponent!: FormComponent;
+  
   constructor(private _ArticleService: ArticleService) { }
   dataForm!: fournisseurCategory
   articleData!: ArticleInterface[]

@@ -1,4 +1,5 @@
 import { AbstraitInterface } from "./abstrait.interface";
+import { articleVente } from "./article.interface";
 
 export interface Category extends AbstraitInterface{
     // id: number;
@@ -29,5 +30,10 @@ export interface Meta {
 
 export interface DataPaginate {
     data: Category[];
+    meta: Meta;
+}
+
+export interface DataVentePaginate {
+    data: articleVente[];
     meta: Meta;
 }

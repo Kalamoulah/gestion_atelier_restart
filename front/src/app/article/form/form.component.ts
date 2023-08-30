@@ -23,31 +23,30 @@ export class FormComponent implements OnChanges {
   fournisseurData!: fourniseurFilter[];
   listfournisseur!: dataResponseCategory[]
   selectedIds: number[] = [];
-  fournisseurSelected!: dataResponseCategory[]
+  fournisseurSelected!: dataResponseCategory[];
+  
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>
- 
+
   constructor(private fb: FormBuilder, private sanitizer: DomSanitizer) {
     this.fournisseurSelected = []
     this.articleForm = this.fb.group({
       libelle: ['', [Validators.required, Validators.minLength(3)]],
       prix: [0, [Validators.required, Validators.pattern('^[0-9]*$')]],
       stock: [0, [Validators.required, Validators.pattern('^[0-9]*$')]],
-      Fournisseur: [[], [] ],
+      Fournisseur: [[], []],
       selectedOption: ["", Validators.required],
       reference: ["", Validators.required],
       image: [""],
     });
   }
 
-  chargerFormulaire(article: ArticleInterface)
-  {
+  chargerFormulaire(article: ArticleInterface) {
     this.articleForm?.patchValue(article);
-    
   }
-  
+
 
   ngOnChanges(changes: SimpleChanges): void {
-   
+
     console.log(changes['articleDataUpdate']?.currentValue);
     this.articleForm.patchValue({
       libelle: changes['articleDataUpdate']?.currentValue?.libelle,
@@ -59,36 +58,34 @@ export class FormComponent implements OnChanges {
     this.backgroundImageSelected = 'http://localhost:8000/storage/' + changes['articleDataUpdate']?.currentValue?.path_url;
 
     if (changes['articleDataUpdate']?.currentValue?.fournisseurs) {
-        this.selectedIds = changes['articleDataUpdate']?.currentValue?.fournisseurs;
+      this.selectedIds = changes['articleDataUpdate']?.currentValue?.fournisseurs;
     } else {
       this.selectedIds = [];
     }
-  } 
+  }
 
   // =====================================================================================//
 
-    selectImage(event: Event): void {
-      
-      const inputElement = event.target as HTMLInputElement;
-      const selectedImage :File |undefined= inputElement.files?.[0]
-      console.log(selectedImage);
-      if (!this.isValidImage(selectedImage!.type)) {
-        console.log('nono');
-      }else{
-        const reader = new FileReader();
-        reader.onload = (e:any)=>{
-          const imageBase64 = e.target.result.split(',')[1];
-          console.log(e.target.result);
-          this.backgroundImageSelected = this.sanitizer!.bypassSecurityTrustUrl(e.target.result);;
-        }
-        reader.readAsDataURL(selectedImage!);
+  selectImage(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const selectedImage: File | undefined = inputElement.files?.[0]
+    console.log(selectedImage);
+    if (!this.isValidImage(selectedImage!.type)) {
+      console.log('nono');
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const imageBase64 = e.target.result.split(',')[1];
+        console.log(e.target.result);
+        this.backgroundImageSelected = this.sanitizer!.bypassSecurityTrustUrl(e.target.result);;
       }
+      reader.readAsDataURL(selectedImage!);
     }
+  }
 
-  isValidImage(name: string):boolean
-  {
-    const extention: string[]= ['jpeg','png','jpg','gif']
-     return extention.includes(name.substring(6)) 
+  isValidImage(name: string): boolean {
+    const extention: string[] = ['jpeg', 'png', 'jpg', 'gif']
+    return extention.includes(name.substring(6))
   }
 
   // ===================================================================================//
@@ -96,7 +93,7 @@ export class FormComponent implements OnChanges {
   selectedFournisseurs: fourniseurFilter[] = [];
   toggleSelection(id: number) {
     const index = this.selectedIds.indexOf(id);
-    
+
     if (index !== -1) {
       this.selectedIds.splice(index, 1);
       this.removeSelected(id)
@@ -107,7 +104,7 @@ export class FormComponent implements OnChanges {
   }
 
   searchFourniseur() {
- 
+
     const searchTerm = this.articleForm.value.Fournisseur.toLowerCase()
     if (searchTerm === "") {
       this.listfournisseur = []
@@ -134,7 +131,7 @@ export class FormComponent implements OnChanges {
     let reference = ""
     let libellePrefix = this.articleForm.value.libelle.slice(0, 3).toLowerCase();
     console.log(libellePrefix);
-    
+
     const categorieValue = this.articleForm.get('selectedOption')!.value
     let categorie = this.articleData.map(cat => cat.categorie);
     let specificCategorie = categorie.filter(cat => cat == categorieValue)

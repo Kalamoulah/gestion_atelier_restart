@@ -20,10 +20,10 @@ class ArticleResource extends JsonResource
             "libelle"=>$this->libelle,
             "prix" => $this->prix,
             "stock"=> $this->stock,
-            "categorie"=> $this->categorie->libelle,
+            // "categorie"=> $this->categorie->libelle,
             // "fournisseur_id"=> $this->fourniseur,
-            "path_url" => $this->path_url,  
-            "reference"=>$this->reference
+            // "path_url" => $this->path_url,  
+            // "reference"=>$this->reference
         ];
     }
 }
