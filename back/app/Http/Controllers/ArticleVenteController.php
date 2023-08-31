@@ -166,13 +166,17 @@ class ArticleVenteController extends Controller
         });
     }
 
-
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $articleVente = ArticleVente::find($id);
+        if ($articleVente) {
+            // $articleVente->articles()->delete();
+            $articleVente->delete();
+
+        return dataCollection::toApiResponse("l'article a bien été suprimmer", [$articleVente], true);
+        }
     }
 }

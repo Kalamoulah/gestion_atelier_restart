@@ -20,6 +20,7 @@ export class ArticleVenteComponent implements OnInit {
   categories!: dataResponseCategory[];
   categoriesVente!: Category[]
   articleVente!: articleVente[]
+
   currentPage: number = 1;
   allArticlePaginate: number = 0;
   dataPaginate!: articleVente[]
@@ -53,11 +54,12 @@ export class ArticleVenteComponent implements OnInit {
     ).subscribe();
   }
 
-
   articleDelete(id: number) {
     this._ArticleVenteService.delete(id).subscribe((res: ResponseInterface) => {
+      console.log(res);
       if (res.success) {
-        this.articleVente = this.articleVente.filter(article => article.id != id)
+        this.dataPaginate = this.dataPaginate.filter(article => article.id != id)
+        console.log( this.articleVente );
       }
     });
   }
@@ -74,6 +76,10 @@ export class ArticleVenteComponent implements OnInit {
     })
   }
 
+  onPageChanged(newPage: number) {
+    this.currentPage = newPage;
+    this.paginationArticle(this.currentPage); 
+  }
 
   sendDataForm(data: any) {
     console.log(data);
@@ -113,10 +119,7 @@ export class ArticleVenteComponent implements OnInit {
     this.formVenteComponent.chargerFormulaire(data)
   }
 
-  onPageChanged(newPage: number) {
-    this.currentPage = newPage;
-    this.paginationArticle(this.currentPage); 
-  }
+  
 
 
 }

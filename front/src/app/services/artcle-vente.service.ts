@@ -21,5 +21,7 @@ export class ArtcleVenteService extends AbstraitService<any>{
     return this.http.get<DataVentePaginate>(`${environment.url}${this.uri()}?page=${page}`);
   }
 
+  
+
 }
 

@@ -47,6 +47,7 @@ export class FormVenteComponent {
 
   chargerFormulaire(article: articleVente) {
     this.AticleVenteForm?.patchValue(article);
+    this.backgroundImageSelected = this.sanitizer!.bypassSecurityTrustUrl(article.path_url);
     
     while (this.confection.length !== 0) {
       this.confection.removeAt(0);
@@ -140,6 +141,8 @@ export class FormVenteComponent {
       } else {
         costForRow = qte * prix
         totalCost += costForRow;
+        
+        
       }
 
     }
@@ -158,7 +161,7 @@ export class FormVenteComponent {
     if (marge >= 500 && marge <= maximumMarge) {
       console.log(cout);
       this.AticleVenteForm.patchValue({
-        prix: cout + marge
+        prix: cout + +marge
       });
     }
   }
