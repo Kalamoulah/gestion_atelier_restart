@@ -13,6 +13,7 @@ export interface dataResponseCategory extends AbstraitInterface {
     quantity?:number
     prix?:number
     stock?:number
+    categorie?: string
 }
 
 export interface fourniseurFilter {

@@ -7,7 +7,15 @@
                     <div class="col-4 ">
                         <label for="libelle" class="m-4">Libelle<span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="libelle" formControlName="libelle"
-                            placeholder="Libelle">
+                            placeholder="Libelle"
+                            [ngClass]="{'is-valid': AticleVenteForm.get('libelle')?.valid, 
+                                      'is-invalid': AticleVenteForm.get('libelle')?.invalid &&
+                                                   (AticleVenteForm.get('libelle')?.touched || 
+                                                    AticleVenteForm.get('libelle')?.dirty)}">
+                        <div *ngIf="AticleVenteForm.get('libelle')?.touched && AticleVenteForm.get('libelle')?.dirty"
+                            class="invalid-feedback">
+                            Le champ Libellé est requis.
+                        </div>
                     </div>
                     <div class="col-4">
                         <label for="inputPassword2" class="m-4">categorie<span class="text-danger">*</span></label>
@@ -44,20 +52,31 @@
                             </thead>
                             <tbody formArrayName="confection">
                                 <tr *ngFor="let row of confection.controls; let i = index" [formGroupName]="i">
-                                    <td><input type="text" class="form-control" formControlName="libelleConf"
-                                            (input)="onInputFieldLib(i)"></td>
+                                    <td>
+                                        <input type="text" class="form-control" formControlName="libelleConf"
+                                            (input)="onInputFieldLib(i)">
+
+                                    </td>
                                     <td>
                                         <input type="number" class="form-control" formControlName="qte"
                                             (input)="onInputFielQtr(i)">
+                                        <input type="hidden" formArrayName="categorie">
+                                        <!-- <div *ngIf="confection.controls[i].get('libelleConf')?.hasError('insufficientCategories')">
+                                                Le libellé n'appartient pas à une catégorie valide.
+                                              </div> -->
+                                        <div
+                                            *ngIf="confection.controls[i].get('libelleConf')?.hasError('articleNotFound')">
+                                            Libellé introuvable.
+                                        </div>
                                     </td>
 
-                                    <div  class="suggestions">
-                                        <div *ngFor="let suggestion of suggestion[i]"    
+                                    <div class="suggestions">
+                                        <div *ngFor="let suggestion of suggestion[i]"
                                             (click)="onSuggestionClick(suggestion, i)">
                                             {{ suggestion.libelle }}
                                             <input type="hidden" [value]="suggestion.id" formControlName="id">
                                         </div>
-                                    </div> 
+                                    </div>
                                 </tr>
                             </tbody>
                         </table>
@@ -71,10 +90,8 @@
                     </div>
                     <div class="col-4">
                         <label for="inputPassword2">marge<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" formControlName="marge" 
-                        (input)="onInputFieldMarge()"
-                        (input)="validInput('marge')"
-                        >
+                        <input type="text" class="form-control" formControlName="marge" (input)="onInputFieldMarge()"
+                            (input)="validInput('marge')">
                     </div>
                 </div>
                 <div class="col-4 ">
@@ -96,10 +113,8 @@
             </div>
         </div>
         <button type="submit" class="btn btn-outline-primary mt-4" (click)="onSubmit()"
-            [disabled]="AticleVenteForm.invalid">
-            envoyer
+             [disabled]="!AticleVenteForm.valid">
+            {{ isEditMode ? 'Modifier' : 'Ajouter' }}
         </button>
     </form>
-
-
 </div>

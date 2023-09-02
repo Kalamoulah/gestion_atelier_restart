@@ -38,9 +38,8 @@ export class ArticleComponent implements OnInit {
   // =================================================================================================
   // addArticle(data: FormData) {
   //   this._ArticleService.add(data).subscribe((res: ResponseInterface) => {
-        
-        
   //   });
+
   // }
   articleDataUpdate(article : ArticleInterface)
   {
@@ -50,7 +49,6 @@ export class ArticleComponent implements OnInit {
 
   addArticle(data: FormData) {  
    console.log(this.articleDataUpdate);
-   
   //   if (this.articleDataUpdate) {
   //  console.log(data);
   //     this._ArticleService.update(data, this.articleDataUpdate.id).subscribe((res: any) => {

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { validatorArrayForm } from 'src/app/Validators/Validator';
 import { articleVente } from 'src/app/interface/article.interface';
 import { Category } from 'src/app/interface/paginate.interface';
 import { dataResponseCategory } from 'src/app/interface/response.interface';
@@ -12,7 +13,7 @@ import { dataResponseCategory } from 'src/app/interface/response.interface';
 })
 export class FormVenteComponent {
 
-
+  isEditMode: boolean = false;
   @Input() categories: dataResponseCategory[] = [];
   @Input() categoriesVente!: Category[]
   @Output() submitForm = new EventEmitter<articleVente>();
@@ -25,21 +26,23 @@ export class FormVenteComponent {
 
   constructor(private fb: FormBuilder, private sanitizer: DomSanitizer) {
     this.AticleVenteForm = this.fb.group({
-      libelle: ['', [Validators.required, Validators.minLength(3)]],
+      libelle: ['', [Validators.required]],
       categorie: ['veullez selection un categorie', [Validators.required]],
       promo: [0, [Validators.required,]],
-      cout: [0, [Validators.required]],
-      marge: ['', [Validators.required]],
-      prix: [0, [Validators.required]],
+      cout: ["", [Validators.required]],
+      marge: ["", [Validators.required]],
+      prix: ["", [Validators.required]],
       reference: [''],
       // image: [''],
-      confection: this.fb.array([]),
+      confection: this.fb.array([],
+        [Validators.required]
+        ),
     });
     this.AticleVenteForm.addControl('path_url', this.fb.control(''));
   }
-  // ngOnInit(): void {
-  //   this.addNewRow(); 
-  // }
+  ngOnInit(): void {
+    this.addNewRow(); 
+  }
 
   get confection(): FormArray {
     return this.AticleVenteForm.get('confection') as FormArray
@@ -56,32 +59,35 @@ export class FormVenteComponent {
       this.confection.push(new FormGroup({
         id: new FormControl([conf.id]),
         libelleConf: new FormControl([conf.libelleConf]),
-        qte: new FormControl([conf.quantity])
+        qte: new FormControl([conf.quantity]),
+        categorie: new FormControl([conf.categorie]),
+
       }));
     });
-
+    this.isEditMode = true;
   }
 
     addNewRow() {
-     
+  
       const newRow = this.fb.group({
         id: [''],
-        libelleConf: ['', [Validators.required]],
-        qte: [null, [Validators.required]],
+        libelleConf: [''],
+        qte: [null],
+        categorie: ['null'],
       })
-       if (this.confection.length == 0) {
-         this.confection.push(newRow)
-         return
-       }
-        if (!this.confection.at(this.confection.length - 1)?.valid) {
-         alert("ZOom baby");
-         return
-         }
+      //  if (this.confection.length == 0) {
+      //    this.confection.push(newRow)
+      //    return
+      //  }
+      //   if (!this.confection.at(this.confection.length - 1)?.valid) {
+      //    alert("Zoom baby");
+      //    return
+      //    }
          this.confection.push(newRow)
     }
-
-
   onClickPromo(event: Event) {
+    console.log(this.categories);
+    
     const target = event.target as HTMLInputElement;
     this.promo = target.checked;
   }
@@ -104,19 +110,27 @@ export class FormVenteComponent {
 
     const rowGroup = this.confection.controls[rowIndex] as FormGroup;
     const searchTerm = rowGroup.controls['libelleConf'].value;
-    console.log(searchTerm);
-    console.log(this.categories);
+      // console.log(searchTerm);
+      // console.log(this.categories);
+
+    const libelleConfControl = rowGroup.get('libelleConf');
+    libelleConfControl?.setValidators([validatorArrayForm.validateCategories(this.categories, this.confection)]);
+    libelleConfControl?.updateValueAndValidity();
 
     this.suggestion[rowIndex] = this.categories!
       .filter(category => category.libelle.startsWith(searchTerm)
       )
-    console.log(this.suggestion);
+    // console.log(this.suggestion);
   }
 
   onSuggestionClick(suggestion: dataResponseCategory, rowIndex: number) {
+    console.log(suggestion);
+    
     const rowGroup = this.confection.controls[rowIndex] as FormGroup;
     rowGroup.controls['libelleConf'].setValue(suggestion.libelle);
     rowGroup.controls['id'].setValue(suggestion.id);
+    rowGroup.controls['categorie'].setValue(suggestion.categorie!);
+    
     // console.log(suggestion);
   }
 
@@ -141,8 +155,7 @@ export class FormVenteComponent {
       } else {
         costForRow = qte * prix
         totalCost += costForRow;
-        
-        
+      
       }
 
     }
@@ -177,7 +190,6 @@ export class FormVenteComponent {
     console.log(this.photo);
 
     // const selectedImage: File | undefined = inputElement.files?.[0]
-
     if (!this.isValidImage(this.photo!.type)) {
       alert('nono')
     } else {
@@ -203,11 +215,7 @@ export class FormVenteComponent {
 
 
   onSubmit() {
-    console.log("mouus");
-
     const formData = this.AticleVenteForm.value;
-
     this.submitForm.emit(formData);
-
   }
 }

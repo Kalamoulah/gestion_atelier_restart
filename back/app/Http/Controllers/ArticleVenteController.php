@@ -33,8 +33,7 @@ class ArticleVenteController extends Controller
     }
 
     public function all()
-    {
-
+    {   
         $articleVente = ArticleVente::with('articles')->get();
         $articleConf = ArticleResource::collection(Article::all());
         $categorieVente = Categories::where('type_article', "vente")->get();
@@ -59,6 +58,7 @@ class ArticleVenteController extends Controller
             $datas = $request->validated();
 
             $categorie = Categories::where('libelle', $datas['categorie'])->first();
+            // return $categorie;
             if (!$categorie) {
                 response()->json("erreur categorie n'existe pas");
             }
@@ -124,31 +124,33 @@ class ArticleVenteController extends Controller
             $newData = $request->validated();
        
             $coutDeFabrication = 0;
-            foreach ($newData['confection'] as $confectionItem) {
-                $articleConfection = Article::findOrFail($confectionItem['id']);
+         $categorie = Categories::where('libelle',$request->categorie)->first();  
+         if ($categorie) {
+            $categorie_id = $categorie->id;
+         }
+            // foreach ($newData['confection'] as $confectionItem) {
+            //     $articleConfection = Article::find($confectionItem['id']);
 
-                if ($confectionItem['qte'] > $articleConfection->stock) {
-                    return response()->json(['error' => "Stock insuffisant pour l'article {$articleConfection->libelle}"], 400);
-                }
+            //     // if ($confectionItem['qte'] > $articleConfection->stock) {
+            //     //     return response()->json(['error' => "Stock insuffisant pour l'article {$articleConfection->libelle}"], 400);
+            //     // }
+            //     $coutDeFabrication += $confectionItem['qte'] * $articleConfection->prix;
+            // }
 
-                $coutDeFabrication += $confectionItem['qte'] * $articleConfection->prix;
-            }
+            // $minimumMarge = 500;
+            // $maximumMarge = $coutDeFabrication / 3;
+            // if (!($request->marge >= $minimumMarge && $request->marge  <= $maximumMarge)) {
+            //     return response()->json(['error' => "Marge invalide"], 400);
+            // }    
+            // $prixDeVente = $coutDeFabrication + $request->marge;
 
-            $minimumMarge = 500;
-            $maximumMarge = $coutDeFabrication / 3;
-            if (!($request->marge >= $minimumMarge && $request->marge  <= $maximumMarge)) {
-                return response()->json(['error' => "Marge invalide"], 400);
-            }
-
-    
-            $prixDeVente = $coutDeFabrication + $request->marge;
             $articleVente->update([
                 "libelle" => $newData['libelle'],
-                "categories_id" => $articleVente ->id,
+                "categories_id" => $categorie_id,
                 "reference" => $request->reference,
                 "promo" => $request->promo,
                 "marge" => $request->marge,
-                "prix" => $prixDeVente,
+                "prix" => $request->prix,
                 "cout" => $coutDeFabrication,
             ]);
 

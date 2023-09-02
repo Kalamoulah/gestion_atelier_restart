@@ -20,25 +20,34 @@ export class ArticleVenteComponent implements OnInit {
   categories!: dataResponseCategory[];
   categoriesVente!: Category[]
   articleVente!: articleVente[]
-
   currentPage: number = 1;
   allArticlePaginate: number = 0;
   dataPaginate!: articleVente[]
-
+  updatedata!:any
   ngOnInit(): void {
     this.getData()
     this.paginationArticle(this.currentPage)
   }
+
+  updateArticle(data: articleVente) {
+    // console.log(data);
+    this.updatedata = data
+   
+     this.formVenteComponent.chargerFormulaire(data)
+  }
+
   getData() {
     this._ArticleVenteService.all().pipe(
       tap({
         next: (res: any) => {
-          // console.log(res);
+          // console.log(res.data.categories?.categorie);
+          console.log(res);
+          
           this.categoriesVente = res.data?.categories.categorieVente
           //  console.log( this.categoriesVente );
 
           this.categories = res.data?.categories.categorie;
-          // console.log(this.categories);
+          // console.log('categorie: '+ res);
 
           this.articleVente = res.data?.articleVente
           // console.log(res.data);
@@ -69,9 +78,7 @@ export class ArticleVenteComponent implements OnInit {
       this.dataPaginate = res.data
       this.allArticlePaginate = res.meta.total;
 
-      console.log('currentPage:', this.currentPage);
-      // console.log('itemsPerPage:', this.itemsPerPage);
-      console.log('allArticlePaginate:', this.allArticlePaginate);
+     
 
     })
   }
@@ -82,20 +89,42 @@ export class ArticleVenteComponent implements OnInit {
   }
 
   sendDataForm(data: any) {
-    console.log(data);
-    this._ArticleVenteService.add(data).pipe(
-      tap({
-        next: (res: any) => {
-          console.log(res)
-        },
-        complete: () => {
-          console.log('observable terminé');
-        },
-        error: (err) => {
-          console.error("Une erreur s'est produite :", err);
-        }
-      })
-    ).subscribe()
+    // console.log(this.isEditing);
+    
+     if (this.formVenteComponent.isEditMode) {
+  
+      console.log(data);
+      
+      this._ArticleVenteService.update(data, this.updatedata?.id).pipe(
+        tap({
+          next: (res: any) => {
+            console.log(res);
+          },
+          complete: () => {
+            console.log('observable terminé');
+          },
+          error: (err) => {
+            console.error("Une erreur s'est produite :", err);
+          }
+        })
+      ).subscribe();
+     }else{
+      console.log('ajout');
+      
+       this._ArticleVenteService.add(data).pipe(
+         tap({
+           next: (res: any) => {
+             console.log(res)
+           },
+           complete: () => {
+             console.log('observable terminé');
+           },
+           error: (err) => {
+             console.error("Une erreur s'est produite :", err);
+           }
+         })
+       ).subscribe()
+     }
   }
 
   updatedataForm(data: any, id: number) {
@@ -103,7 +132,6 @@ export class ArticleVenteComponent implements OnInit {
       tap({
         next: (res: any) => {
           console.log(res);
-
         },
         complete: () => {
           console.log('observable terminé');
@@ -115,12 +143,7 @@ export class ArticleVenteComponent implements OnInit {
     ).subscribe();
   }
 
-  updateArticle(data: articleVente) {
-    this.formVenteComponent.chargerFormulaire(data)
-  }
-
   
-
 
 }
 
